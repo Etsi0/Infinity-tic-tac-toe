@@ -167,8 +167,17 @@ function DrawPieces(n, piece, squareSize) {
     WinConPrep
 ==================================================*/
 function WinConPrep(piece) {
-    for (let i = 0; i < history[piece].length; i++) {
-        return WinCon(piece, [history[piece][i].x, history[piece][i].y], [0, 0], 1);
+    if (!history[piece]) {
+        return false;
+    }
+    const sortedHistory = structuredClone(history[piece]).sort((a, b) => {
+        if (a.x === b.x) {
+            return a.y - b.y;
+        }
+        return a.x - b.x;
+    });
+    for (let i = 0; i < sortedHistory.length; i++) {
+        return WinCon(piece, [sortedHistory[i].x, sortedHistory[i].y], [0, 0], 1);
     }
 }
 /*==================================================
