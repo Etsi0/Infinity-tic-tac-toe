@@ -44,7 +44,10 @@ const imagePaths: string[][] = [
 	['PLAYER', '../assets/img/x.svg'],
 	['PLAYERHovering', '../assets/img/xHovering.svg'],
 ];
-export const images: { [x: string]: HTMLImageElement } = Preload(imagePaths);
+export let images: { [x: string]: HTMLImageElement };
+addEventListener('load', () => {
+	images = Preload(imagePaths);
+});
 
 /*==================================================
 	History

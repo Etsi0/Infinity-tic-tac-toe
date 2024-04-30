@@ -17,7 +17,10 @@ const imagePaths = [
     ['PLAYER', '../assets/img/x.svg'],
     ['PLAYERHovering', '../assets/img/xHovering.svg'],
 ];
-export const images = Preload(imagePaths);
+export let images;
+addEventListener('load', () => {
+    images = Preload(imagePaths);
+});
 /*==================================================
     History
 ==================================================*/
