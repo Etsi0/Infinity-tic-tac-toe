@@ -1,12 +1,23 @@
 import { canvas, ctx } from './environment.js';
-import { pEdge, lineThickness, numCells } from './setting.js';
+import { settings, history, squares } from './setting.js';
+import { GameLoop } from './index.js';
 
 /**
- * Resizes the canvas so it's always fullscreen
+ * Resizes the canvas to ensure it always fits on the screen.
  */
-export function ResizeCanvas() {
+export function ResizeCanvas(): void {
 	canvas.width = window.innerWidth;
 	canvas.height = window.innerHeight;
+
+	const { squareSize, inlinePadding, blockPadding } = GetBoardDimensions();
+
+	for (let i = 0; i < settings.numCells; i++) {
+		for (let j = 0; j < settings.numCells; j++) {
+			const temp = squareSize + PercentageToPixels(settings.lineThickness);
+			squares[i][j].x = inlinePadding + j * temp;
+			squares[i][j].y = blockPadding + i * temp;
+		}
+	}
 }
 
 /**
@@ -17,15 +28,26 @@ export function ResizeCanvas() {
  * const sizeInfo = getBoardDimensions();
  * console.log(sizeInfo.boardSize); // Outputs the computed board size
  */
-export function getBoardDimensions() {
-	const boardSize: number =
-		Math.min(canvas.width, canvas.height) -
-		(Math.min(canvas.width, canvas.height) / 100) * pEdge;
-	const inlinePadding: number = (canvas.width - boardSize) / 2;
-	const blockPadding: number = (canvas.height - boardSize) / 2;
+export function GetBoardDimensions(): { [x: string]: number } {
+	const smallestSide = Math.min(canvas.width, canvas.height);
+	const boardSize = smallestSide - (smallestSide / 100) * settings.pEdge;
+
+	const squareSize =
+		(boardSize -
+			PercentageToPixels(settings.lineThickness, boardSize) * (settings.numCells - 1)) /
+		settings.numCells;
+
+	const inlinePadding = Padding(canvas.width);
+
+	const blockPadding = Padding(canvas.height);
+
+	function Padding(n: number): number {
+		return (n - boardSize) / 2;
+	}
 
 	return {
 		boardSize,
+		squareSize,
 		inlinePadding,
 		blockPadding,
 	};
@@ -33,9 +55,49 @@ export function getBoardDimensions() {
 
 /**
  * converts object size from percent to pixels
- * @param n | object size in percent
- * @returns object size in pixels
+ * @param {Number} n object size in percent
+ * @param {Number} boardSize optional param with the size of the board
+ * @returns {Number} object size in pixels
  */
-export function PercentageToPixels(n: number) {
-	return getBoardDimensions().boardSize * (n / 100);
+export function PercentageToPixels(n: number, boardSize?: number): number {
+	return (boardSize ?? GetBoardDimensions().boardSize) * (n / 100);
+}
+
+/**
+ *
+ * @returns {HTMLImageElement}
+ */
+export function Preload(images: string[][]): { [x: string]: HTMLImageElement } {
+	return images.reduce((accumulator, currentValue) => {
+		const img = document.createElement('img');
+		img.src = currentValue[1];
+		img.onload = () => {
+			accumulator[currentValue[0]] = img;
+			if (Object.keys(accumulator).length === images.length) {
+				GameLoop();
+			}
+		};
+		img.onerror = () => {
+			console.error(`Failed to load image: ${img.src}`);
+		};
+		return accumulator;
+	}, {});
+}
+
+export function HasWon(): boolean {
+	return Object.keys(history).some((piece: keyof typeof history) => {
+		return history[piece].won;
+	});
+}
+
+export function ChangeTurn(): void {
+	Object.keys(history).forEach((piece: keyof typeof history) => {
+		history[piece].turn = !history[piece].turn;
+	});
+}
+
+export function IsCellOccupied(x: number, y: number): boolean {
+	return Object.keys(history).some((piece) => {
+		return history[piece].coords.some((coord) => coord.x === x && coord.y === y);
+	});
 }
