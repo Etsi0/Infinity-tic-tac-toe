@@ -39,15 +39,12 @@ export const settings: TSettings = {
 	Image preloader
 ==================================================*/
 const imagePaths: string[][] = [
-	['AI', '../assets/img/o.svg'],
-	['AIHovering', '../assets/img/oHovering.svg'],
-	['PLAYER', '../assets/img/x.svg'],
-	['PLAYERHovering', '../assets/img/xHovering.svg'],
+	['AI', './assets/img/o.svg'],
+	['AIHovering', './assets/img/oHovering.svg'],
+	['PLAYER', './assets/img/x.svg'],
+	['PLAYERHovering', './assets/img/xHovering.svg'],
 ];
-export let images: { [x: string]: HTMLImageElement };
-addEventListener('load', () => {
-	images = Preload(imagePaths);
-});
+export const images: { [x: string]: HTMLImageElement } = Preload(imagePaths);
 
 /*==================================================
 	History

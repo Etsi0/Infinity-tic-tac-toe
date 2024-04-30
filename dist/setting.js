@@ -12,15 +12,12 @@ export const settings = {
     Image preloader
 ==================================================*/
 const imagePaths = [
-    ['AI', '../assets/img/o.svg'],
-    ['AIHovering', '../assets/img/oHovering.svg'],
-    ['PLAYER', '../assets/img/x.svg'],
-    ['PLAYERHovering', '../assets/img/xHovering.svg'],
+    ['AI', './assets/img/o.svg'],
+    ['AIHovering', './assets/img/oHovering.svg'],
+    ['PLAYER', './assets/img/x.svg'],
+    ['PLAYERHovering', './assets/img/xHovering.svg'],
 ];
-export let images;
-addEventListener('load', () => {
-    images = Preload(imagePaths);
-});
+export const images = Preload(imagePaths);
 /*==================================================
     History
 ==================================================*/
