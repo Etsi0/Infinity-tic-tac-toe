@@ -1,39 +1,44 @@
 import { canvas, ctx } from './environment.js';
 import { CheckClick, mouse } from './click.js';
-import { settings, history, squares, images } from './setting.js';
+import { settings, history, squares, images, icons } from './setting.js';
 import { ResizeCanvas, GetBoardDimensions, PercentageToPixels, HasWon } from './util.js';
 import { WinConPrep } from './won.js';
-addEventListener('resize', () => ResizeCanvas());
-addEventListener('load', () => ResizeCanvas());
+addEventListener('load', ResizeCanvas);
+addEventListener('resize', ResizeCanvas);
 /*==================================================
     GameLoop
 ==================================================*/
 export function GameLoop() {
-    // overwrites previous frame with new background
-    ctx.fillStyle = 'hsl(240deg 12% 10% / 100%)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    Clear();
     DrawBoard();
-    // Gets pieces from all players
+    // Looks if the player as won and draws it's pieces
     Object.keys(history).forEach((piece) => {
         history[piece].won = WinConPrep(piece);
         DrawPieces(piece);
-        // Draws who's turn it is
-        if (history[piece].turn) {
-            DrawText((turnText) => {
-                ctx.fillText(`${piece} TURN`, canvas.width / 2, turnText);
-            });
-        }
-        // Draws who won
         if (history[piece].won) {
             DrawText((turnText) => {
-                ctx.fillText(`${piece} WON`, canvas.width / 2, canvas.height - turnText);
+                ctx.fillText(`${piece} WON`, canvas.width / 2, turnText);
             });
         }
     });
+    if (!HasWon()) {
+        DrawText((turnText) => {
+            ctx.fillText(`${settings.turn} TURN`, canvas.width / 2, turnText);
+        });
+    }
+    DrawIcons();
     // Click stuff
     CheckClick();
     mouse.click = false;
     requestAnimationFrame(GameLoop);
+}
+/*==================================================
+    Clear
+==================================================*/
+function Clear() {
+    // overwrites previous frame with new background
+    ctx.fillStyle = 'hsl(240deg 12% 10% / 100%)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 /*==================================================
     DrawBoard
@@ -77,5 +82,14 @@ function DrawText(fun) {
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     fun(turnText);
+}
+/*==================================================
+    DrawIcon
+==================================================*/
+function DrawIcons() {
+    Object.keys(icons).forEach((item) => {
+        const icon = icons[item];
+        ctx.drawImage(images[item], icon.x, icon.y, icon.size, icon.size);
+    });
 }
 //# sourceMappingURL=index.js.map

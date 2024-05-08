@@ -1,67 +1,91 @@
 import { settings, history, checkArray } from './setting.js';
+import { coords, isMiddleOrCorner } from './util.js';
 
+/**
+ * Main function to initiate the play for AI. It calculates the best position to place a piece on the board
+ * based on board state.
+ */
 export function Play(): void {
 	// Creates the priority board
-	const priority = Array.from({ length: settings.numCells }, (v, row) =>
-		Array.from({ length: settings.numCells }, (v, col) => 0)
+	const priority = Array.from({ length: settings.numCells }, (_, row) =>
+		Array.from({ length: settings.numCells }, (_, col) => 0)
 	);
 
 	// computes where it should be placed
 	ChangePriority(priority);
-	const position = GetPosition(priority);
+	const position = GetCoordinate(priority);
 
 	// remove piece
-	if (history.AI.coords.length === settings.numCells) {
-		history.AI.coords.shift();
+	if (history[settings.turn].coords.length === settings.numCells) {
+		history[settings.turn].coords.shift();
 	}
 	// add piece
-	history.AI.coords.push({ x: position[0], y: position[1] });
+	history[settings.turn].coords.push(position);
 }
 
+/**
+ * Updates the priority for each square on the board, so the AI can decide the best move.
+ * @param { number[][] } board - An array with the priorities for each square.
+ */
 function ChangePriority(board: number[][]): void {
-	//adds priority to empty squares so the ai know where to place its piece
+	//adds priority to squares that is not occupied so the ai know where to place its piece
 	//adds more priority if they are about to win or lose
 	Object.keys(history).forEach((piece: keyof typeof history) => {
 		history[piece].coords.forEach((item) => {
-			board[item.x][item.y] = -Infinity;
+			board[item.y][item.x] = -Infinity;
 
 			// check for collisions on the vertical and horizontal plane
-			MiddleHand(piece, board, [item.x, 0], [...checkArray.vertical]);
-			MiddleHand(piece, board, [0, item.y], [...checkArray.horizontal]);
+			MiddleHand(piece, board, { x: item.x, y: 0 }, checkArray.vertical);
+			MiddleHand(piece, board, { x: 0, y: item.y }, checkArray.horizontal);
 
 			// check for collisions on the diagonal plane
-			if (isMiddleOrCorner(item.x, item.y)) {
-				MiddleHand(piece, board, [0, 0], [...checkArray.leftDiagonal]);
-				MiddleHand(piece, board, [settings.numCells - 1, 0], [...checkArray.rightDiagonal]);
+			if (isMiddleOrCorner(item)) {
+				MiddleHand(piece, board, { x: 0, y: 0 }, checkArray.leftDiagonal);
+				MiddleHand(
+					piece,
+					board,
+					{ x: settings.numCells - 1, y: 0 },
+					checkArray.rightDiagonal
+				);
 			}
 		});
 	});
 }
 
+/**
+ * Adjusts the priority of board if they can get all pieces in a from that position and in that direction.
+ * @param { keyof typeof history } piece - The current piece type being analyzed.
+ * @param { number[][] } board - An array with the priorities for each square.
+ * @param { coords } position - The starting position for checking.
+ * @param { coords } direction - The direction to check and adjust.
+ */
 function MiddleHand(
 	piece: keyof typeof history,
 	board: number[][],
-	position: number[],
-	direction: number[]
+	position: coords,
+	direction: coords
 ): void {
 	if (!DoesCollide(piece, position, direction)) {
 		ChangeLine(board, position, direction);
-		winAndBlock(piece, board, position, direction);
+		WinAndBlock(piece, board, position, direction);
 	}
 }
 
-function DoesCollide(
-	piece: keyof typeof history,
-	position: number[],
-	direction: number[]
-): boolean {
+/**
+ * Checks if placing a piece will collide with the opponent's pieces.
+ * @param { keyof typeof history } piece - The piece type.
+ * @param { coords } position - The starting position for the check.
+ * @param { coords } direction - The direction vector for the check.
+ * @returns { boolean } True if there is a collision; otherwise, false.
+ */
+function DoesCollide(piece: keyof typeof history, position: coords, direction: coords): boolean {
 	const keys = Object.keys(history);
 	const invertPiece = (piece === keys[0] ? keys[1] : keys[0]) as keyof typeof history;
 	return history[invertPiece].coords.some((item) => {
 		for (let i = 0; i < settings.numCells; i++) {
 			if (
-				item.x === position[0] + direction[0] * i &&
-				item.y === position[1] + direction[1] * i
+				item.x === position.x + direction.x * i &&
+				item.y === position.y + direction.y * i
 			) {
 				return true;
 			}
@@ -69,25 +93,26 @@ function DoesCollide(
 	});
 }
 
-function ChangeLine(board: number[][], position: number[], direction: number[]): void {
-	for (let i = 0; i < settings.numCells; i++) {
-		board[position[0] + direction[0] * i][position[1] + direction[1] * i] += 1;
-	}
-}
-
-function winAndBlock(
+/**
+ * Gives a line more priority if it's about to win or lose.
+ * @param { keyof typeof history } piece - The piece type.
+ * @param { number[][] } board - An array with the priorities for each square.
+ * @param { coords } position - The starting position.
+ * @param { coords } direction - The direction of alignment.
+ */
+function WinAndBlock(
 	piece: keyof typeof history,
 	board: number[][],
-	position: number[],
-	direction: number[]
+	position: coords,
+	direction: coords
 ): void {
 	let piecesInALine = 0;
 	for (let i = 0; i < history[piece].coords.length; i++) {
 		for (let j = 0; j < settings.numCells; j++) {
 			const coord = history[piece].coords[i];
 			if (
-				coord.x === position[0] + direction[0] * j &&
-				coord.y === position[1] + direction[1] * j
+				coord.x === position.x + direction.x * j &&
+				coord.y === position.y + direction.y * j
 			) {
 				piecesInALine++;
 			}
@@ -99,44 +124,52 @@ function winAndBlock(
 	}
 }
 
-function isMiddleOrCorner(row: number, col: number): boolean {
-	return isCorner(row, col) || isMiddle(row, col);
+/**
+ * Modifies the priority along a line determined by a starting position and direction.
+ * @param { number[][] } board - An array with the priorities for each square.
+ * @param { coords } position - The starting position.
+ * @param { coords } direction - The direction to change.
+ */
+function ChangeLine(board: number[][], position: coords, direction: coords): void {
+	for (let i = 0; i < settings.numCells; i++) {
+		board[position.y + direction.y * i][position.x + direction.x * i] += 1;
+	}
 }
 
-function isMiddle(row: number, col: number): boolean {
-	const middle = Math.floor(settings.numCells / 2);
-	return (
-		(row === middle || (settings.numCells % 2 === 0 && row === middle - 1)) &&
-		(col === middle || (settings.numCells % 2 === 0 && col === middle - 1))
-	);
-}
-
-function isCorner(row: number, col: number): boolean {
-	return (
-		(row === 0 || row === settings.numCells - 1) && (col === 0 || col === settings.numCells - 1)
-	);
-}
-
-function GetPosition(board: number[][]): number[] {
-	const positions = PositionsWithHighestNum(board);
+/**
+ * Determines the best coordinates to place a piece on depending on witch square has the highest priority.
+ * @param { number[][] } board - An array with the priorities for each square.
+ * @returns { coords } The coordinates to place the piece on.
+ * @example
+ * console.log(GetCoordinate([[0, 1, 3, 2], [1, 4, 2, 6], [3, 3, 6, 5]])) // returns { x: 3, y: 1 } or { x: 2, y: 2 }
+ */
+function GetCoordinate(board: number[][]): coords {
+	const positions = CoordinatesWithHighestPriority(board);
 	return positions[Math.floor(Math.random() * positions.length)];
+}
 
-	function PositionsWithHighestNum(board: number[][]): number[][] {
-		let maxValue: number = -Infinity;
-		let maxPositions: number[][] = [];
+/**
+ * Finds the coordinates with the highest priority on the board.
+ * @param { number[][] } board - An array with the priorities for each square.
+ * @returns { coords[] } Object containing the x and y coordinates of the squares with the highest priority.
+ * @example
+ * console.log(CoordinatesWithHighestPriority([[0, 1, 3, 2], [1, 4, 2, 6], [3, 3, 6, 5]])) // returns [{ x: 3, y: 1 }, { x: 2, y: 2 }] because 6 is the biggest number
+ */
+function CoordinatesWithHighestPriority(board: number[][]): coords[] {
+	let maxValue: number = -Infinity;
+	let maxPositions: coords[] = [];
 
-		for (let i = 0; i < board.length; i++) {
-			for (let j = 0; j < board[i].length; j++) {
-				const current = board[i][j];
-				if (current > maxValue) {
-					maxValue = current;
-					maxPositions = [[i, j]];
-				} else if (current === maxValue) {
-					maxPositions.push([i, j]);
-				}
+	for (let i = 0; i < board.length; i++) {
+		for (let j = 0; j < board[i].length; j++) {
+			const current = board[i][j];
+			if (current > maxValue) {
+				maxValue = current;
+				maxPositions = [{ x: j, y: i }];
+			} else if (current === maxValue) {
+				maxPositions.push({ x: j, y: i });
 			}
 		}
-
-		return maxPositions;
 	}
+
+	return maxPositions;
 }
