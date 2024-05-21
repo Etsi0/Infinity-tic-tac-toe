@@ -63,7 +63,7 @@ export function CheckClick() {
         }
     }
     // click on icons
-    if (mouse.click === 1 || mouse.click === 3) {
+    if (mouse.click === 1 || mouse.click === 4) {
         Object.keys(icons).forEach((item) => {
             const icon = icons[item];
             if (InsideObject(icon, icon.size)) {

@@ -72,7 +72,7 @@ export function CheckClick(): void {
 	}
 
 	// click on icons
-	if (mouse.click === 1 || mouse.click === 3) {
+	if (mouse.click === 1 || mouse.click === 4) {
 		Object.keys(icons).forEach((item: keyof typeof icons) => {
 			const icon = icons[item];
 			if (InsideObject(icon, icon.size)) {
