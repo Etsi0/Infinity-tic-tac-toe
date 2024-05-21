@@ -141,43 +141,4 @@ export function IsSquareOccupied(position) {
         return history[piece].coords.some((coord) => coord.x === position.x && coord.y === position.y);
     });
 }
-/**
- * Determines if a position is either in the middle or in the corner of the board.
- * @param { coords } position - The x and y position to check.
- * @returns { boolean } `true` if the position is a middle or corner position, otherwise `false`.
- * @example
- * if (isMiddleOrCorner({x: 0, y: 0})) {
- *     console.log('this square is either in the middle or in the corner')
- * }
- */
-export function isMiddleOrCorner(position) {
-    return isCorner(position) || isMiddle(position);
-}
-/**
- * Checks if the specified position is in the middle of the board.
- * @param { coords } position - The x and y position to check.
- * @returns { boolean } `true` if the position is in the middle, otherwise `false`.
- * @example
- * if (isMiddle({x: 0, y: 0})) {
- *     console.log('this square is in the middle')
- * }
- */
-export function isMiddle(position) {
-    const middle = Math.floor(settings.numCells / 2);
-    return ((position.x === middle || (settings.numCells % 2 === 0 && position.x === middle - 1)) &&
-        (position.y === middle || (settings.numCells % 2 === 0 && position.y === middle - 1)));
-}
-/**
- * Checks if the specified position is in the corner of the board.
- * @param { coords } position - The x and y position to check.
- * @returns { boolean } `true` if the position is in a corner, otherwise `false`.
- * @example
- * if (isCorner({x: 0, y: 0})) {
- *     console.log('this square is in the corner')
- * }
- */
-export function isCorner(position) {
-    return ((position.x === 0 || position.x === settings.numCells - 1) &&
-        (position.y === 0 || position.y === settings.numCells - 1));
-}
 //# sourceMappingURL=util.js.map
