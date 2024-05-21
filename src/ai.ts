@@ -85,6 +85,9 @@ function DoesCollide(piece: keyof typeof history, position: coords, direction: c
 		if (i === key) {
 			continue;
 		}
+		if (history[i].coords) {
+			continue;
+		}
 		return history[i].coords.some((item) => {
 			for (let i = 0; i < settings.numCells; i++) {
 				if (
