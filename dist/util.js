@@ -18,7 +18,7 @@ export function Preload(basePath, images, callback) {
     return [...images].reduce((accumulator, [name, path]) => {
         // Creates new element
         const img = new Image();
-        img.src = path;
+        img.src = basePath + path;
         // Checks if the image got loaded or not
         img.onload = () => {
             accumulator[name] = img;

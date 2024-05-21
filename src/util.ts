@@ -28,7 +28,7 @@ export function Preload(
 	return [...images].reduce((accumulator: TImageObj, [name, path]: string[]) => {
 		// Creates new element
 		const img = new Image();
-		img.src = path;
+		img.src = basePath + path;
 
 		// Checks if the image got loaded or not
 		img.onload = () => {
