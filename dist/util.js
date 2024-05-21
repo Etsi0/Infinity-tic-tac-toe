@@ -4,16 +4,17 @@ import { GameLoop } from './index.js';
 /**
  * Loads images from specified paths and returns a map of `img` elements indexed by name.
  * Images are loaded asynchronously.
- * @param { string[][] } images - An array of `[imageName, imagePath]` pairs.
+ * @param { Readonly<string> | string } basePath - The base path to the images.
+ * @param { Readonly<string[][]> | string[][] } images - An array of `[imageName, imagePath]` pairs.
  * @param { Function } [callback] - Optional callback that gets executed when all images are loaded.
  * @returns { TImageObj } An object mapping each `imageName` to its corresponding loaded `HTMLImageElement`.
  * @throws { Error } Logs an error to the console if an image fails to load.
  * @example
- * const images = Preload([['imageName', './path/to/image.extension']], () => {
+ * const images = Preload('./path/to/', [['imageName', 'image.extension']], () => {
  *     console.log(images) // Outputs all the images that got loaded
  * });
  */
-export function Preload(images, callback) {
+export function Preload(basePath, images, callback) {
     return [...images].reduce((accumulator, [name, path]) => {
         // Creates new element
         const img = new Image();

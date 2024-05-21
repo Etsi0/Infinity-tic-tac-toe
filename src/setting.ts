@@ -50,18 +50,17 @@ export const settings: TSettings = {
 /*==================================================
 	Image preloader
 ==================================================*/
-const path = Object.freeze('./assets/img/');
 const imagePaths: Readonly<string[][]> = Object.freeze([
 	//Pieces
-	['AI', `${path}o.svg`],
-	['AIHovering', `${path}oHovering.svg`],
-	['PLAYER', `${path}x.svg`],
-	['PLAYERHovering', `${path}xHovering.svg`],
+	['AI', `o.svg`],
+	['AIHovering', `oHovering.svg`],
+	['PLAYER', `x.svg`],
+	['PLAYERHovering', `xHovering.svg`],
 	//Icons
-	['Website', `${path}website.svg`],
-	['Extension', `${path}extension.svg`],
+	['Website', `website.svg`],
+	['Extension', `extension.svg`],
 ]);
-export const images: { [x: string]: HTMLImageElement } = Preload(imagePaths);
+export const images: { [x: string]: HTMLImageElement } = Preload('./assets/img/', imagePaths);
 
 /*==================================================
 	Icon sizes
