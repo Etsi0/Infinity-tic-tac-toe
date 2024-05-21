@@ -60,15 +60,20 @@ function MiddleHand(piece, board, position, direction) {
  */
 function DoesCollide(piece, position, direction) {
     const keys = Object.keys(history);
-    const invertPiece = (piece === keys[0] ? keys[1] : keys[0]);
-    return history[invertPiece].coords.some((item) => {
-        for (let i = 0; i < settings.numCells; i++) {
-            if (item.x === position.x + direction.x * i &&
-                item.y === position.y + direction.y * i) {
-                return true;
-            }
+    const key = keys.indexOf(piece);
+    for (let i = 0; i < keys.length; i++) {
+        if (i === key) {
+            continue;
         }
-    });
+        return history[i].coords.some((item) => {
+            for (let i = 0; i < settings.numCells; i++) {
+                if (item.x === position.x + direction.x * i &&
+                    item.y === position.y + direction.y * i) {
+                    return true;
+                }
+            }
+        });
+    }
 }
 /**
  * Gives a line more priority if it's about to win or lose.

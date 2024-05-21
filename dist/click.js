@@ -5,7 +5,7 @@ import * as Ai from './ai.js';
 //* only change this array when the mouse moves or clicks
 //* disable click at the end of the GameLoop so the click gets only triggered on one frame
 export const mouse = {
-    click: false,
+    click: 0,
     x: 0,
     y: 0,
 };
@@ -18,25 +18,7 @@ document.addEventListener('mousemove', (event) => {
 });
 // Register player clicks
 document.addEventListener('mousedown', (event) => {
-    switch (event.buttons) {
-        case 1:
-            mouse.click = true;
-            break;
-        case 2:
-            // Right click
-            break;
-        case 4:
-            // Middle click
-            break;
-        case 8:
-            // 4th button
-            break;
-        case 16:
-            // 5th button
-            break;
-        default:
-        // A button that is not added above
-    }
+    mouse.click = event.buttons;
 });
 // Disables so the right click menu doesn't popup
 document.addEventListener('contextmenu', (event) => event.preventDefault());
@@ -64,7 +46,7 @@ function ChangeCursorState() {
 export function CheckClick() {
     // place piece on the board
     if (!HasWon()) {
-        if (!history[settings.turn].isAI && mouse.click) {
+        if (!history[settings.turn].isAI && mouse.click === 1) {
             const selectedCell = GetSquare();
             if (selectedCell && !IsSquareOccupied({ x: selectedCell.x, y: selectedCell.y })) {
                 UpdatePlayerHistory({ x: selectedCell.x, y: selectedCell.y });
@@ -81,11 +63,11 @@ export function CheckClick() {
         }
     }
     // click on icons
-    if (mouse.click) {
+    if (mouse.click === 1 || mouse.click === 3) {
         Object.keys(icons).forEach((item) => {
             const icon = icons[item];
             if (InsideObject(icon, icon.size)) {
-                window.open(icon.link, '_blank');
+                window.open(icon.link, '_blank', 'noopener');
             }
         });
     }

@@ -29,7 +29,7 @@ export function GameLoop() {
     DrawIcons();
     // Click stuff
     CheckClick();
-    mouse.click = false;
+    mouse.click = 0;
     requestAnimationFrame(GameLoop);
 }
 /*==================================================
