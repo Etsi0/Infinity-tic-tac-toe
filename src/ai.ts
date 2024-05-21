@@ -1,5 +1,5 @@
 import { settings, history, checkArray } from './setting.js';
-import { coords, isMiddleOrCorner } from './util.js';
+import { type coords } from './util.js';
 
 /**
  * Main function to initiate the play for AI. It calculates the best position to place a piece on the board
@@ -31,16 +31,18 @@ function ChangePriority(board: number[][]): void {
 	//adds priority to squares that is not occupied so the ai know where to place its piece
 	//adds more priority if they are about to win or lose
 	Object.keys(history).forEach((piece: keyof typeof history) => {
-		history[piece].coords.forEach((item) => {
-			board[item.y][item.x] = -Infinity;
+		history[piece].coords.forEach((coord) => {
+			board[coord.y][coord.x] = -Infinity;
 
 			// check for collisions on the vertical and horizontal plane
-			MiddleHand(piece, board, { x: item.x, y: 0 }, checkArray.vertical);
-			MiddleHand(piece, board, { x: 0, y: item.y }, checkArray.horizontal);
+			MiddleHand(piece, board, { x: coord.x, y: 0 }, checkArray.vertical);
+			MiddleHand(piece, board, { x: 0, y: coord.y }, checkArray.horizontal);
 
 			// check for collisions on the diagonal plane
-			if (isMiddleOrCorner(item)) {
+			if (coord.x === coord.y) {
 				MiddleHand(piece, board, { x: 0, y: 0 }, checkArray.leftDiagonal);
+			}
+			if (settings.numCells - 1 - coord.x === coord.y) {
 				MiddleHand(
 					piece,
 					board,
@@ -65,31 +67,31 @@ function MiddleHand(
 	position: coords,
 	direction: coords
 ): void {
-	if (!DoesCollide(piece, position, direction)) {
+	if (CanMakeLine(piece, position, direction)) {
 		ChangeLine(board, position, direction);
 		WinAndBlock(piece, board, position, direction);
 	}
 }
 
 /**
- * Checks if placing a piece will collide with the opponent's pieces.
+ * Checks if it is possible to make a line without colliding into a opponent's piece.
  * @param { keyof typeof history } piece - The piece type.
  * @param { coords } position - The starting position for the check.
  * @param { coords } direction - The direction vector for the check.
  * @returns { boolean } True if there is a collision; otherwise, false.
  */
-function DoesCollide(piece: keyof typeof history, position: coords, direction: coords): boolean {
+function CanMakeLine(piece: keyof typeof history, position: coords, direction: coords): boolean {
 	const keys = Object.keys(history);
 	const key = keys.indexOf(piece as string);
 	for (let i = 0; i < keys.length; i++) {
 		if (i === key) {
 			continue;
 		}
-		return history[keys[i]].coords.some((item) => {
+		return !history[keys[i]].coords.some((coord) => {
 			for (let i = 0; i < settings.numCells; i++) {
 				if (
-					item.x === position.x + direction.x * i &&
-					item.y === position.y + direction.y * i
+					coord.x === position.x + direction.x * i &&
+					coord.y === position.y + direction.y * i
 				) {
 					return true;
 				}
@@ -149,7 +151,7 @@ function ChangeLine(board: number[][], position: coords, direction: coords): voi
  * console.log(GetCoordinate([[0, 1, 3, 2], [1, 4, 2, 6], [3, 3, 6, 5]])) // returns { x: 3, y: 1 } or { x: 2, y: 2 }
  */
 function GetCoordinate(board: number[][]): coords {
-	const positions = CoordinatesWithHighestPriority(board);
+	const positions = CoordsWithHighestPriority(board);
 	return positions[Math.floor(Math.random() * positions.length)];
 }
 
@@ -160,7 +162,7 @@ function GetCoordinate(board: number[][]): coords {
  * @example
  * console.log(CoordinatesWithHighestPriority([[0, 1, 3, 2], [1, 4, 2, 6], [3, 3, 6, 5]])) // returns [{ x: 3, y: 1 }, { x: 2, y: 2 }] because 6 is the biggest number
  */
-function CoordinatesWithHighestPriority(board: number[][]): coords[] {
+function CoordsWithHighestPriority(board: number[][]): coords[] {
 	let maxValue: number = -Infinity;
 	let maxPositions: coords[] = [];
 
