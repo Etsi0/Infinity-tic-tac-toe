@@ -19,12 +19,11 @@
     1. [Why JSDocs](#why-jsdocs)
 1. [Code Structure](#code-structure)
     1. [Naming](#)
-    1. [Functions and classes](#functions-and-classes)
-    1. [Variables](#variables)
+        1. [Functions and classes](#functions-and-classes)
+        1. [Variables](#variables)
     1. [Commenting and Documentation](#commenting-and-documentation)
-    1. [Comments](#comments)
-    1. [Documentation](#documentation)
-    1. [Code Structure and Organization](#code-structure-and-organization)
+        1. [Comments](#comments)
+        1. [Documentation](#documentation)
     1. [Code styling](#code-styling)
     1. [File and Directory Structure](#file-and-directory-structure)
     1. [Avoiding Magic Numbers and Strings](#avoiding-magic-numbers-and-strings)
@@ -112,9 +111,7 @@ Use comments to explain the "why" and not the "what".
 
 Use JSDoc to document classes and functions
 
-### Code Structure and Organization
-
-#### Code styling
+### Code styling
 
 Install the Prettier extension so everyone can utilize the same code styling settings (.prettierrc).
 
