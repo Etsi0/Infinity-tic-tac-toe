@@ -1,7 +1,14 @@
 import { canvas, ctx } from './environment.js';
 import { CheckClick, mouse } from './click.js';
 import { settings, history, squares, images, icons } from './setting.js';
-import { ResizeCanvas, GetBoardDimensions, PercentageToPixels, HasWon } from './util.js';
+import {
+	ResizeCanvas,
+	GetBoardDimensions,
+	PercentageToPixels,
+	HasWon,
+	ChangeTurn,
+} from './util.js';
+import * as Ai from './ai.js';
 import { WinConPrep } from './won.js';
 
 addEventListener('load', ResizeCanvas);
@@ -36,8 +43,18 @@ export function GameLoop(): void {
 
 	DrawIcons();
 
-	// Click stuff
-	CheckClick();
+	if (!HasWon()) {
+		CheckClick();
+		if (history[settings.turn].isAI && !settings.thinking) {
+			settings.thinking = true;
+			setTimeout(() => {
+				Ai.Play();
+				ChangeTurn();
+				settings.thinking = false;
+			}, Math.random() * 1000);
+		}
+	}
+
 	mouse.click = 0;
 
 	requestAnimationFrame(GameLoop);

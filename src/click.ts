@@ -53,25 +53,14 @@ function ChangeCursorState(): void {
  * Opens link if you click on a icon
  */
 export function CheckClick(): void {
-	// place piece on the board
-	if (!HasWon()) {
-		if (!history[settings.turn].isAI && mouse.click === 1) {
-			const selectedCell = GetSquare();
-			if (selectedCell && !IsSquareOccupied({ x: selectedCell.x, y: selectedCell.y })) {
-				UpdatePlayerHistory({ x: selectedCell.x, y: selectedCell.y });
-				ChangeTurn();
-			}
-		} else if (history[settings.turn].isAI && !settings.thinking) {
-			settings.thinking = true;
-			setTimeout(() => {
-				Ai.Play();
-				ChangeTurn();
-				settings.thinking = false;
-			}, Math.random() * 1000);
+	if (!history[settings.turn].isAI && mouse.click === 1) {
+		const selectedCell = GetSquare();
+		if (selectedCell && !IsSquareOccupied({ x: selectedCell.x, y: selectedCell.y })) {
+			UpdatePlayerHistory({ x: selectedCell.x, y: selectedCell.y });
+			ChangeTurn();
 		}
 	}
 
-	// click on icons
 	if (mouse.click === 1 || mouse.click === 4) {
 		Object.keys(icons).forEach((item: keyof typeof icons) => {
 			const icon = icons[item];
