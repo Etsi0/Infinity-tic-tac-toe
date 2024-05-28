@@ -80,7 +80,7 @@ Determines the winning conditions and checks if a player has won the game.
 
 ## Challenges and Issues
 
-When I tried to make the AI for my game, I initially attempted to utilize the [minimax](https://en.wikipedia.org/wiki/Minimax) algorithm, but it didn't work. So, I searched for a new algorithm that could work with the rules of my version of Tic Tac Toe. Eventually, I found [heuristic](https://en.wikipedia.org/wiki/Heuristic) algorithms, and it worked great in this scenario.
+When I tried to develop the AI for my game, I initially attempted to utilize the [minimax](https://en.wikipedia.org/wiki/Minimax) algorithm. However, it didn't work well with the unique rules of my version of Tic Tac Toe. After extensive research, I discovered [heuristic](https://en.wikipedia.org/wiki/Heuristic) algorithms, which proved to be highly effective in this scenario. This approach allowed the AI to handle the game's complexity and provide a challenging opponent.
 
 ## Technology Choices
 
