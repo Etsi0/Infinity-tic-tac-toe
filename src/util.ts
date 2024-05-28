@@ -1,4 +1,4 @@
-import { canvas, ctx } from './environment.js';
+import { canvas } from './environment.js';
 import { settings, history, squares, icons } from './setting.js';
 import { GameLoop } from './index.js';
 

@@ -1,8 +1,8 @@
 import { canvas } from './environment.js';
 import { history, icons, settings, squares } from './setting.js';
 import { ChangeTurn, GetBoardDimensions, IsSquareOccupied } from './util.js';
-//* only change this array when the mouse moves or clicks
-//* disable click at the end of the GameLoop so the click gets only triggered on one frame
+//* Only change this array when the mouse moves or clicks
+//* Disable click at the end of the GameLoop so the click gets only triggered on one frame
 export const mouse = {
     click: 0,
     x: 0,

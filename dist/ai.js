@@ -5,15 +5,15 @@ import { settings, history, checkArray } from './setting.js';
  */
 export function Play() {
     // Creates the priority board
-    const priority = Array.from({ length: settings.numCells }, (_, row) => Array.from({ length: settings.numCells }, (_, col) => 0));
-    // computes where it should be placed
+    const priority = Array.from({ length: settings.numCells }, () => Array.from({ length: settings.numCells }, () => 0));
+    // Computes where it should be placed
     ChangePriority(priority);
     const position = GetCoordinate(priority);
-    // remove piece
+    // Remove piece
     if (history[settings.turn].coords.length === settings.numCells) {
         history[settings.turn].coords.shift();
     }
-    // add piece
+    // Add piece
     history[settings.turn].coords.push(position);
 }
 /**
@@ -21,15 +21,15 @@ export function Play() {
  * @param { number[][] } board - An array with the priorities for each square.
  */
 function ChangePriority(board) {
-    //adds priority to squares that is not occupied so the ai know where to place its piece
-    //adds more priority if they are about to win or lose
+    // Adds priority to squares that is not occupied so the ai know where to place its piece
+    // Adds more priority if they are about to win or lose
     Object.keys(history).forEach((piece) => {
         history[piece].coords.forEach((coord) => {
             board[coord.y][coord.x] = -Infinity;
-            // check for collisions on the vertical and horizontal plane
+            // Check for collisions on the vertical and horizontal plane
             MiddleHand(piece, board, { x: coord.x, y: 0 }, checkArray.vertical);
             MiddleHand(piece, board, { x: 0, y: coord.y }, checkArray.horizontal);
-            // check for collisions on the diagonal plane
+            // Check for collisions on the diagonal plane
             if (coord.x === coord.y) {
                 MiddleHand(piece, board, { x: 0, y: 0 }, checkArray.leftDiagonal);
             }

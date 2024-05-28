@@ -71,7 +71,7 @@ function WinCon(
 
 /**
  * Checks if there is a piece at the given coordinates.
- * @param { keyof typeof history } piece - which piece it is.
+ * @param { keyof typeof history } piece - Which piece it is.
  * @param { coords } coordinate - The coordinates to check.
  * @returns { boolean } `true` if there type of piece exist on that square, otherwise `false`.
  */

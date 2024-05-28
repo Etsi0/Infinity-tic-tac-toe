@@ -1,5 +1,4 @@
-import { canvas } from './environment.js';
-import { coords, PercentageToPixels, Preload } from './util.js';
+import { coords, Preload } from './util.js';
 
 /*==================================================
 	Types
