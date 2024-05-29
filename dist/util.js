@@ -111,9 +111,7 @@ export function PercentageToPixels(n, boardSize) {
  * }
  */
 export function HasWon() {
-    return Object.keys(history).some((piece) => {
-        return history[piece].won;
-    });
+    return Object.keys(history).some((piece) => history[piece].won);
 }
 export function GetNextPiece() {
     const keys = Object.keys(history);

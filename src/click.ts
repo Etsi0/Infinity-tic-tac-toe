@@ -52,7 +52,7 @@ function ChangeCursorState(): void {
  * Opens link if you click on a icon
  */
 export function CheckClick(): void {
-	if (!history[settings.turn].isAI && mouse.click === 1) {
+	if (!HasWon() && !history[settings.turn].isAI && mouse.click === 1) {
 		const selectedCell = GetSquare();
 		if (selectedCell && !IsSquareOccupied({ x: selectedCell.x, y: selectedCell.y })) {
 			UpdatePlayerHistory({ x: selectedCell.x, y: selectedCell.y });

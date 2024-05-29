@@ -28,17 +28,15 @@ export function GameLoop() {
         });
     }
     DrawIcons();
-    if (!HasWon()) {
-        CheckClick();
-        if (history[settings.turn].isAI && !settings.thinking) {
-            settings.thinking = true;
-            setTimeout(() => {
-                Ai.Play();
-                ChangeTurn();
-                settings.thinking = false;
-            }, Math.random() * 1000);
-        }
+    if (!HasWon() && history[settings.turn].isAI && !settings.thinking) {
+        settings.thinking = true;
+        setTimeout(() => {
+            Ai.Play();
+            ChangeTurn();
+            settings.thinking = false;
+        }, Math.random() * 1000);
     }
+    CheckClick();
     mouse.click = 0;
     requestAnimationFrame(GameLoop);
 }

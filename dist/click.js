@@ -1,6 +1,6 @@
 import { canvas } from './environment.js';
 import { history, icons, settings, squares } from './setting.js';
-import { ChangeTurn, GetBoardDimensions, IsSquareOccupied } from './util.js';
+import { ChangeTurn, GetBoardDimensions, HasWon, IsSquareOccupied } from './util.js';
 //* Only change this array when the mouse moves or clicks
 //* Disable click at the end of the GameLoop so the click gets only triggered on one frame
 export const mouse = {
@@ -43,7 +43,7 @@ function ChangeCursorState() {
  * Opens link if you click on a icon
  */
 export function CheckClick() {
-    if (!history[settings.turn].isAI && mouse.click === 1) {
+    if (!HasWon() && !history[settings.turn].isAI && mouse.click === 1) {
         const selectedCell = GetSquare();
         if (selectedCell && !IsSquareOccupied({ x: selectedCell.x, y: selectedCell.y })) {
             UpdatePlayerHistory({ x: selectedCell.x, y: selectedCell.y });
