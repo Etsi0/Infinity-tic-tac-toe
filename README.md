@@ -3,6 +3,7 @@
 ## Table Of Content
 
 1. [TL;DR](#tldr)
+1. [Compile](#compile)
 1. [Introduction](#introduction)
 1. [Differences from Traditional Tic Tac Toe](#differences-from-traditional-tic-tac-toe)
 1. [File Descriptions](#file-descriptions)
@@ -36,6 +37,10 @@
 ## TL;DR
 
 Infinity Tic Tac Toe is an modified version of Tic Tac Toe that can be played by 2 or more players, where the board size determines the number of pieces each player has. For example, on a 3x3 board, each player has 3 pieces.
+
+## Compile
+
+To compile your ts code into js code you will need to run the `npm run watch` command in your terminal
 
 ## Introduction
 
